@@ -1,0 +1,30 @@
+version: '3'
+
+name: u-sushi
+
+services:
+  server:
+    container_name: u-sushi-server
+    build: .
+    depends_on:
+      - db
+    environment:
+      - DB_CONNECTION_URL=postgres://u-sushi:u-sushi@u-sushi-db:5432/u-sushi?sslmode=disable
+    restart: always
+    ports:
+      - '8081:8081'
+  db:
+    container_name: u-sushi-db
+    image: 'postgres:latest'
+    environment:
+      - POSTGRES_USER=u-sushi
+      - POSTGRES_PASSWORD=u-sushi
+      - POSTGRES_DB=u-sushi
+    volumes:
+      - db:/var/lib/postgresql/data
+    restart: always
+    ports:
+      - '5432:5432'
+
+volumes:
+  db:
