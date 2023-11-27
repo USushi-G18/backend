@@ -1,13 +1,6 @@
 
 -- Client 
 
-CREATE TYPE menu as ENUM ('carte', 'dinner', 'lunch');
-
-CREATE TABLE menu_price (
-    menu menu PRIMARY KEY,
-    price DECIMAL NOT NULL 
-);
-
 CREATE TABLE image (
     id SERIAL PRIMARY KEY,
     -- image base64 encoding
@@ -15,42 +8,47 @@ CREATE TABLE image (
 );
 
 CREATE TABLE category (
-    name TEXT PRIMARY KEY
+    id SERIAL PRIMARY KEY,
+    name TEXT UNIQUE 
 );
+
+CREATE TYPE menu as ENUM ('Carte', 'Dinner', 'Lunch');
 
 CREATE TABLE product (
     id SERIAL PRIMARY KEY,
     name TEXT NOT NULL,
     price DECIMAL NOT NULL,
-    category TEXT NOT NULL REFERENCES category(name),
+    category INT NOT NULL REFERENCES category(id),
     menu menu NOT NULL,
     description text,
     image_id INT REFERENCES image(id),
     -- order_limit null means no limit
     order_limit INT, 
-    -- ex. nighiri 2 piec.
+    -- ex. nigiri 2 piec.
     pieces INT NOT NULL
 );
 
 
 CREATE TABLE allergen (
-    name TEXT PRIMARY KEY 
+    id SERIAL PRIMARY KEY,
+    name TEXT UNIQUE 
 );
 
 CREATE TABLE ingredient (
-    name TEXT PRIMARY KEY,
-    allergen TEXT REFERENCES allergen(name)
+    id SERIAL PRIMARY KEY,
+    name TEXT UNIQUE,
+    allergen INT REFERENCES allergen(id)
 );
 
 CREATE TABLE product_ingredient (
     product_id INT REFERENCES product(id),
-    ingredient_name TEXT REFERENCES ingredient(name),
-    PRIMARY KEY (product_id, ingredient_name)
+    ingredient_id INT REFERENCES ingredient(id),
+    PRIMARY KEY (product_id, ingredient_id)
 );
 
 -- Kitchen
 
-CREATE TYPE command_status as ENUM ('ordered', 'preparing', 'prepared', 'delivered');
+CREATE TYPE command_status as ENUM ('Ordered', 'Preparing', 'Prepared', 'Delivered');
 
 CREATE TABLE session (
     id SERIAL PRIMARY KEY,
@@ -69,7 +67,7 @@ CREATE TABLE command (
 
 -- Login
 
-CREATE TYPE sushi_user_type as ENUM ('kitchen', 'admin', 'client');
+CREATE TYPE sushi_user_type as ENUM ('Kitchen', 'Admin', 'Client');
 
 CREATE TABLE sushi_user (
     user_type sushi_user_type PRIMARY KEY,
