@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"u-sushi/auth"
 	"u-sushi/handlers/category"
 	"u-sushi/handlers/image"
 	"u-sushi/handlers/product"
@@ -9,9 +10,17 @@ import (
 )
 
 func HandleAll(r *mux.Router) {
+	r.Use(auth.AdminAuthMiddleware)
+	HandleAuth(r)
 	HandleCategory(r)
 	HandleImage(r)
 	HandleProduct(r)
+}
+
+func HandleAuth(r *mux.Router) {
+	auth.LoadKey()
+	sr := r.PathPrefix("/auth").Subrouter()
+	sr.HandleFunc("/login", auth.AdminLogin).Methods("POST")
 }
 
 func HandleCategory(r *mux.Router) {

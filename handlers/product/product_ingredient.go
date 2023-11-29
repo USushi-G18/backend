@@ -10,13 +10,15 @@ import (
 	"github.com/gorilla/mux"
 )
 
+type CreateProductIngredientRequest struct {
+	IngredientID int
+}
+
 func CreateProductIngredient(w http.ResponseWriter, r *http.Request) {
 	wrapErr := func(err error) error {
 		return fmt.Errorf("create product_ingredient: %v", err)
 	}
-	var req struct {
-		IngredientID int
-	}
+	var req CreateProductIngredientRequest
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
 		u_sushi.HttpError(w, http.StatusBadRequest, wrapErr(err))

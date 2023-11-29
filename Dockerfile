@@ -11,18 +11,19 @@ RUN go mod download
 
 # Compile
 COPY . .
-RUN go install cmd/server.go
+RUN go install cmd/admin/admin.go
 
 FROM ubuntu 
 
 WORKDIR /runtime
 
-COPY --from=builder /go/bin/server ./
+COPY --from=builder /go/bin/admin ./
 COPY --from=builder /go/bin/migrate ./
+COPY --from=builder /build/secrets ./secrets
 
 COPY migrations migrations
 
 EXPOSE 8081
 
 CMD ./migrate -path migrations -database $DB_CONNECTION_URL up && \
-    ./server
+    ./admin
