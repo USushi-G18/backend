@@ -37,7 +37,7 @@ func ReadCategory(w http.ResponseWriter, r *http.Request) {
 		u_sushi.HttpError(w, http.StatusInternalServerError, wrapErr(err))
 		return
 	}
-	categoriesJson, err := json.Marshal(&categories)
+	categoriesJson, err := json.Marshal(categories)
 	if err != nil {
 		u_sushi.HttpError(w, http.StatusInternalServerError, wrapErr(err))
 		return

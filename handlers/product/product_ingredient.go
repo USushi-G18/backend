@@ -48,7 +48,7 @@ func ReadProductIngredient(w http.ResponseWriter, r *http.Request) {
 		u_sushi.HttpError(w, http.StatusInternalServerError, wrapErr(err))
 		return
 	}
-	ingredientsJson, err := json.Marshal(&ingredients)
+	ingredientsJson, err := json.Marshal(ingredients)
 	if err != nil {
 		u_sushi.HttpError(w, http.StatusInternalServerError, wrapErr(err))
 		return

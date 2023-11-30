@@ -17,7 +17,14 @@ func HttpError(w http.ResponseWriter, statusCode int, httpErr error) {
 		log.Fatalln(err)
 	}
 	log.Println(httpErr)
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(statusCode)
 	fmt.Fprintln(w, string(jsonErr))
+}
+
+func ContentTypeApplicationJsonMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+
+		next.ServeHTTP(w, r)
+	})
 }

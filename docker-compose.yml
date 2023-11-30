@@ -10,9 +10,13 @@ services:
       - db
     environment:
       - DB_CONNECTION_URL=postgres://u-sushi:u-sushi@u-sushi-db:5432/u-sushi?sslmode=disable
+      - KEY_FILE=/run/secrets/key
     restart: always
     ports:
       - '8081:8081'
+      - '8082:8082'
+    secrets:
+      - key
   db:
     container_name: u-sushi-db
     image: 'postgres:latest'
@@ -28,3 +32,8 @@ services:
 
 volumes:
   db:
+
+
+secrets:
+  key:
+    file: ./secrets/key.pem

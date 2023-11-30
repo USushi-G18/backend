@@ -37,7 +37,7 @@ func ReadImage(w http.ResponseWriter, r *http.Request) {
 		u_sushi.HttpError(w, http.StatusInternalServerError, wrapErr(err))
 		return
 	}
-	imagesJson, err := json.Marshal(&images)
+	imagesJson, err := json.Marshal(images)
 	if err != nil {
 		u_sushi.HttpError(w, http.StatusInternalServerError, wrapErr(err))
 		return

@@ -54,11 +54,12 @@ CREATE TABLE session (
     id SERIAL PRIMARY KEY,
     start_at TIMESTAMP NOT NULL,
     end_at TIMESTAMP,
-    table_number INT NOT NULL
+    table_number INT NOT NULL,
+    seating INT NOT NULL
 );
 
 CREATE TABLE command (
-    session INT NOT NULL REFERENCES session(id),
+    session_id INT NOT NULL REFERENCES session(id),
     product_id INT NOT NULL REFERENCES product(id),
     at TIMESTAMP NOT NULL,
     quantity INT NOT NULL,

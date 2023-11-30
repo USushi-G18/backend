@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 	u_sushi "u-sushi"
-	routes "u-sushi/routes/public"
+	routes "u-sushi/routes/user"
 
 	"github.com/gorilla/mux"
 )

@@ -4,10 +4,16 @@ import (
 	"crypto/rand"
 	"crypto/subtle"
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"strings"
 
 	"golang.org/x/crypto/argon2"
+)
+
+var (
+	ErrWrongPassword = errors.New("wrong password")
+	ErrInvalidHash   = errors.New("invalid hash")
 )
 
 type Argon2Params struct {
@@ -67,7 +73,7 @@ func DecodeHash(encodedHash string) (p *Argon2Params, salt []byte, hash []byte, 
 	}
 	vals := strings.Split(encodedHash, "$")
 	if len(vals) != 6 {
-		return nil, nil, nil, wrapErr(fmt.Errorf("encoded hash invalid format"))
+		return nil, nil, nil, wrapErr(ErrInvalidHash)
 	}
 
 	var version int
@@ -76,7 +82,7 @@ func DecodeHash(encodedHash string) (p *Argon2Params, salt []byte, hash []byte, 
 		return nil, nil, nil, err
 	}
 	if version != argon2.Version {
-		return nil, nil, nil, wrapErr(fmt.Errorf("incompatible version of argon2"))
+		return nil, nil, nil, wrapErr(ErrInvalidHash)
 	}
 
 	p = &Argon2Params{}

@@ -37,7 +37,7 @@ func ReadAllergen(w http.ResponseWriter, r *http.Request) {
 		u_sushi.HttpError(w, http.StatusInternalServerError, wrapErr(err))
 		return
 	}
-	allergensJson, err := json.Marshal(&allergens)
+	allergensJson, err := json.Marshal(allergens)
 	if err != nil {
 		u_sushi.HttpError(w, http.StatusInternalServerError, wrapErr(err))
 		return
