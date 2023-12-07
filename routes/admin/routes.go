@@ -14,8 +14,6 @@ func HandleAll(r *mux.Router) {
 	r.Use(u_sushi.ContentTypeApplicationJsonMiddleware)
 	r.Use(auth.AdminAuthMiddleware)
 	HandleAuth(r)
-	HandleCategory(r)
-	HandleImage(r)
 	HandleProduct(r)
 }
 
@@ -26,11 +24,17 @@ func HandleAuth(r *mux.Router) {
 	sr.HandleFunc("/password/{userType}", auth.ChangePassword).Methods("POST")
 }
 
-func HandleCategory(r *mux.Router) {
-	r.HandleFunc("/category", category.CreateCategory).Methods("POST")
-	r.HandleFunc("/category", category.ReadCategory).Methods("GET")
-	r.HandleFunc("/category/{id}", category.UpdateCategory).Methods("POST")
-	r.HandleFunc("/category/{id}", category.DeleteCategory).Methods("DELETE")
+func HandleProduct(r *mux.Router) {
+	r.HandleFunc("/product", product.CreateProduct).Methods("POST")
+	r.HandleFunc("/product", product.ReadProduct).Methods("GET")
+	r.HandleFunc("/product/{id}", product.UpdateProduct).Methods("POST")
+	r.HandleFunc("/product/{id}", product.DeleteProduct).Methods("DELETE")
+
+	HandleImage(r)
+	HandleCategory(r)
+	HandleAllergen(r)
+	HandleIngredient(r)
+	HandleProductIngredient(r)
 }
 
 func HandleImage(r *mux.Router) {
@@ -40,15 +44,11 @@ func HandleImage(r *mux.Router) {
 	r.HandleFunc("/image/{id}", image.DeleteImage).Methods("DELETE")
 }
 
-func HandleProduct(r *mux.Router) {
-	r.HandleFunc("/product", product.CreateProduct).Methods("POST")
-	r.HandleFunc("/product", product.ReadProduct).Methods("GET")
-	r.HandleFunc("/product/{id}", product.UpdateProduct).Methods("POST")
-	r.HandleFunc("/product/{id}", product.DeleteProduct).Methods("DELETE")
-
-	HandleAllergen(r)
-	HandleIngredient(r)
-	HandleProductIngredient(r)
+func HandleCategory(r *mux.Router) {
+	r.HandleFunc("/category", category.CreateCategory).Methods("POST")
+	r.HandleFunc("/category", category.ReadCategory).Methods("GET")
+	r.HandleFunc("/category/{id}", category.UpdateCategory).Methods("POST")
+	r.HandleFunc("/category/{id}", category.DeleteCategory).Methods("DELETE")
 }
 
 func HandleAllergen(r *mux.Router) {

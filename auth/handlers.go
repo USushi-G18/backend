@@ -16,22 +16,30 @@ type TokenResponse struct {
 	Token string `json:"token"`
 }
 
-type AdminLoginRequest struct {
+type LoginRequest struct {
 	Password string
 }
 
 func AdminLogin(w http.ResponseWriter, r *http.Request) {
+	loginUser(w, r, models.UserAdmin)
+}
+
+func EmployeeLogin(w http.ResponseWriter, r *http.Request) {
+	loginUser(w, r, models.UserEmployee)
+}
+
+func loginUser(w http.ResponseWriter, r *http.Request, userType models.UserType) {
 	wrapErr := func(err error) error {
 		return fmt.Errorf("login: %v", err)
 	}
-	var req AdminLoginRequest
+	var req LoginRequest
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
 		u_sushi.HttpError(w, http.StatusBadRequest, wrapErr(err))
 		return
 	}
 	var encodedHash string
-	err = u_sushi.GetDB().QueryRow("select password from sushi_user where user_type = $1", models.UserAdmin).Scan(&encodedHash)
+	err = u_sushi.GetDB().QueryRow("select password from sushi_user where user_type = $1", userType).Scan(&encodedHash)
 	if err != nil {
 		u_sushi.HttpError(w, http.StatusInternalServerError, wrapErr(err))
 		return
@@ -43,7 +51,7 @@ func AdminLogin(w http.ResponseWriter, r *http.Request) {
 		u_sushi.HttpError(w, http.StatusUnauthorized, wrapErr(ErrWrongPassword))
 		return
 	}
-	token, err := CreateJWT(models.UserAdmin, null.Int{})
+	token, err := CreateJWT(userType, null.Int{})
 	if err != nil {
 		u_sushi.HttpError(w, http.StatusInternalServerError, wrapErr(err))
 		return
@@ -61,6 +69,7 @@ func AdminLogin(w http.ResponseWriter, r *http.Request) {
 type ClientLoginRequest struct {
 	Password    string
 	TableNumber int
+	Menu        models.Menu
 	Seatings    int
 }
 
@@ -89,9 +98,10 @@ func ClientLogin(w http.ResponseWriter, r *http.Request) {
 	}
 	var sessionID int
 	err = u_sushi.GetDB().QueryRow(
-		"insert into session (start_at, table_number, seating) values ($1, $2, $3) returning id",
+		"insert into session (start_at, table_number, menu, seating) values ($1, $2, $3, $4) returning id",
 		time.Now(),
 		req.TableNumber,
+		req.Menu,
 		req.Seatings,
 	).Scan(&sessionID)
 	if err != nil {

@@ -40,7 +40,7 @@ func CreateCommand(w http.ResponseWriter, r *http.Request) {
 		u_sushi.HttpError(w, http.StatusInternalServerError, wrapErr(err))
 		return
 	}
-	if ok, err := checkCanOrderMore(tx, req, int(claims.SessionID.Int64)); err != nil {
+	if ok, err := checkValidCommand(tx, req, int(claims.SessionID.Int64)); err != nil {
 		u_sushi.HttpError(w, http.StatusBadRequest, wrapErr(err))
 		return
 	} else if !ok {
@@ -74,9 +74,9 @@ func CreateCommand(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func CommandHistory(w http.ResponseWriter, r *http.Request) {
+func ReadClientCommandHistory(w http.ResponseWriter, r *http.Request) {
 	wrapErr := func(err error) error {
-		return fmt.Errorf("command history: %v", err)
+		return fmt.Errorf("read client command history: %v", err)
 	}
 	claims, err := auth.ExtractClaims(r)
 	if err != nil {
@@ -95,4 +95,50 @@ func CommandHistory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fmt.Fprint(w, string(commandJson))
+}
+
+func ReadCommandHistory(w http.ResponseWriter, r *http.Request) {
+	wrapErr := func(err error) error {
+		return fmt.Errorf("read command history: %v", err)
+	}
+	command := []models.Command{}
+	err := u_sushi.GetDB().Select(&command, "select * from command where")
+	if err != nil {
+		u_sushi.HttpError(w, http.StatusInternalServerError, wrapErr(err))
+		return
+	}
+	commandJson, err := json.Marshal(command)
+	if err != nil {
+		u_sushi.HttpError(w, http.StatusInternalServerError, wrapErr(err))
+		return
+	}
+	fmt.Fprint(w, string(commandJson))
+}
+
+type UpdateOrderStatusRequest struct {
+	SessionID int `db:"session_id"`
+	ProductID int `db:"product_id"`
+	At        time.Time
+	Status    models.CommandStatus
+}
+
+func UpdateOrderStatus(w http.ResponseWriter, r *http.Request) {
+	wrapErr := func(err error) error {
+		return fmt.Errorf("update order status: %v", err)
+	}
+	var req UpdateOrderStatusRequest
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		u_sushi.HttpError(w, http.StatusBadRequest, wrapErr(err))
+		return
+	}
+
+	_, err = u_sushi.GetDB().NamedExec(
+		"update command set status = :status where session_id = :session_id and product_id = :product_id and at = :at",
+		req,
+	)
+	if err != nil {
+		u_sushi.HttpError(w, http.StatusBadRequest, wrapErr(err))
+		return
+	}
 }

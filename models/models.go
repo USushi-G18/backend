@@ -17,8 +17,9 @@ const (
 )
 
 const (
-	UserAdmin  UserType = "Admin"
-	UserClient UserType = "Client"
+	UserAdmin    UserType = "Admin"
+	UserClient   UserType = "Client"
+	UserEmployee UserType = "Employee"
 )
 
 const (

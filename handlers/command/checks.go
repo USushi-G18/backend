@@ -7,7 +7,7 @@ import (
 	"gopkg.in/guregu/null.v4"
 )
 
-func checkCanOrderMore(tx *sqlx.Tx, command []CommandRequest, sessionID int) (bool, error) {
+func checkValidCommand(tx *sqlx.Tx, command []CommandRequest, sessionID int) (bool, error) {
 	var seating int
 	err := tx.QueryRow("select seating from session where id = $1", sessionID).Scan(&seating)
 	if err != nil {
@@ -32,7 +32,14 @@ func checkCanOrderMore(tx *sqlx.Tx, command []CommandRequest, sessionID int) (bo
 		ID    int
 		Limit null.Int
 	}
-	err = u_sushi.GetDB().Select(&products, "select distinct p.id, p.order_limit as limit from product p join command c on c.product_id = p.id where session_id = $1", sessionID)
+	err = u_sushi.GetDB().Select(
+		&products,
+		`select distinct p.id, p.order_limit as limit 
+			from product p 
+			join command c on c.product_id = p.id 
+		where session_id = $1`,
+		sessionID,
+	)
 	if err != nil {
 		return false, err
 	}

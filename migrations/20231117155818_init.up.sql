@@ -55,6 +55,7 @@ CREATE TABLE session (
     start_at TIMESTAMP NOT NULL,
     end_at TIMESTAMP,
     table_number INT NOT NULL,
+    menu menu NOT NULL,
     seating INT NOT NULL
 );
 
@@ -63,12 +64,13 @@ CREATE TABLE command (
     product_id INT NOT NULL REFERENCES product(id),
     at TIMESTAMP NOT NULL,
     quantity INT NOT NULL,
-    status command_status NOT NULL
+    status command_status NOT NULL,
+    PRIMARY KEY (session_id, product_id, at)
 );
 
 -- Login
 
-CREATE TYPE sushi_user_type as ENUM ('Kitchen', 'Admin', 'Client');
+CREATE TYPE sushi_user_type as ENUM ('Employee', 'Admin', 'Client');
 
 CREATE TABLE sushi_user (
     user_type sushi_user_type PRIMARY KEY,

@@ -6,7 +6,8 @@ import (
 	"sync"
 	u_sushi "u-sushi"
 	admin_routes "u-sushi/routes/admin"
-	user_routes "u-sushi/routes/user"
+	client_routes "u-sushi/routes/client"
+	employee_routes "u-sushi/routes/employee"
 
 	"github.com/gorilla/mux"
 )
@@ -35,7 +36,8 @@ func main() {
 		defer waitGroup.Done()
 
 		r := mux.NewRouter()
-		user_routes.HandleAll(r)
+		client_routes.HandleAll(r)
+		employee_routes.HandleAll(r)
 		err = http.ListenAndServe(":8082", r)
 		if err != nil {
 			log.Fatalln(err)

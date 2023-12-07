@@ -32,6 +32,9 @@ func LoadKey() error {
 	wrapErr := func(err error) error {
 		return fmt.Errorf("load key: %v", err)
 	}
+	if Key != nil {
+		return nil
+	}
 	keyFilePath := os.Getenv("KEY_FILE")
 	keyFile, err := os.ReadFile(keyFilePath)
 	if err != nil {
