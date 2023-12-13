@@ -1,4 +1,4 @@
-package category
+package plate
 
 import (
 	"encoding/json"

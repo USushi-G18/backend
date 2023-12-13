@@ -3,7 +3,6 @@ package routes
 import (
 	u_sushi "u-sushi"
 	"u-sushi/auth"
-	"u-sushi/handlers/category"
 	"u-sushi/handlers/command"
 	"u-sushi/handlers/image"
 	"u-sushi/handlers/plate"
@@ -46,7 +45,7 @@ func HandleImage(r *mux.Router) {
 }
 
 func HandleCategory(r *mux.Router) {
-	r.HandleFunc("/category", category.ReadCategory).Methods("GET")
+	r.HandleFunc("/category", plate.ReadCategory).Methods("GET")
 }
 
 func HandleAllergen(r *mux.Router) {
