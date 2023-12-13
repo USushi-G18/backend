@@ -6,7 +6,7 @@ import (
 	"u-sushi/handlers/category"
 	"u-sushi/handlers/command"
 	"u-sushi/handlers/image"
-	"u-sushi/handlers/product"
+	"u-sushi/handlers/plate"
 
 	"github.com/gorilla/mux"
 )
@@ -17,7 +17,7 @@ func HandleAll(r *mux.Router) {
 	sr := r.PathPrefix("/admin").Subrouter()
 	HandleAuth(sr)
 	HandleCommand(sr)
-	HandleProduct(sr)
+	HandlePlate(sr)
 }
 
 func HandleAuth(r *mux.Router) {
@@ -31,14 +31,14 @@ func HandleCommand(r *mux.Router) {
 	r.HandleFunc("/history", command.ReadClientCommandHistory).Methods("GET")
 }
 
-func HandleProduct(r *mux.Router) {
-	r.HandleFunc("/product", product.ReadProduct).Methods("GET")
+func HandlePlate(r *mux.Router) {
+	r.HandleFunc("/plate", plate.ReadPlate).Methods("GET")
 
 	HandleImage(r)
 	HandleCategory(r)
 	HandleAllergen(r)
 	HandleIngredient(r)
-	HandleProductIngredient(r)
+	HandlePlateIngredient(r)
 }
 
 func HandleImage(r *mux.Router) {
@@ -50,13 +50,13 @@ func HandleCategory(r *mux.Router) {
 }
 
 func HandleAllergen(r *mux.Router) {
-	r.HandleFunc("/allergen", product.ReadAllergen).Methods("GET")
+	r.HandleFunc("/allergen", plate.ReadAllergen).Methods("GET")
 }
 
 func HandleIngredient(r *mux.Router) {
-	r.HandleFunc("/ingredient", product.ReadIngredient).Methods("GET")
+	r.HandleFunc("/ingredient", plate.ReadIngredient).Methods("GET")
 }
 
-func HandleProductIngredient(r *mux.Router) {
-	r.HandleFunc("/product-ingredient/{productID}", product.ReadProductIngredient).Methods("GET")
+func HandlePlateIngredient(r *mux.Router) {
+	r.HandleFunc("/plate-ingredient/{plateID}", plate.ReadPlateIngredient).Methods("GET")
 }

@@ -25,6 +25,7 @@ func CreateCategory(w http.ResponseWriter, r *http.Request) {
 		u_sushi.HttpError(w, http.StatusBadRequest, wrapErr(err))
 		return
 	}
+	w.WriteHeader(http.StatusCreated)
 }
 
 func ReadCategory(w http.ResponseWriter, r *http.Request) {

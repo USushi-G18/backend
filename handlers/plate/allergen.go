@@ -1,4 +1,4 @@
-package product
+package plate
 
 import (
 	"encoding/json"
@@ -10,65 +10,66 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func CreateIngredient(w http.ResponseWriter, r *http.Request) {
+func CreateAllergen(w http.ResponseWriter, r *http.Request) {
 	wrapErr := func(err error) error {
-		return fmt.Errorf("create ingredient: %v", err)
+		return fmt.Errorf("create allergen: %v", err)
 	}
-	var req models.Ingredient
+	var req models.Allergen
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
 		u_sushi.HttpError(w, http.StatusBadRequest, wrapErr(err))
 		return
 	}
-	_, err = u_sushi.GetDB().NamedExec("insert into ingredient (name, allergen) values (:name, :allergen)", &req)
+	_, err = u_sushi.GetDB().NamedExec("insert into allergen (name) values (:name)", &req)
 	if err != nil {
 		u_sushi.HttpError(w, http.StatusBadRequest, wrapErr(err))
 		return
 	}
+	w.WriteHeader(http.StatusCreated)
 }
 
-func ReadIngredient(w http.ResponseWriter, r *http.Request) {
+func ReadAllergen(w http.ResponseWriter, r *http.Request) {
 	wrapErr := func(err error) error {
-		return fmt.Errorf("read ingredient: %v", err)
+		return fmt.Errorf("read allergen: %v", err)
 	}
-	ingredients := []models.Ingredient{}
-	err := u_sushi.GetDB().Select(&ingredients, "select * from ingredient")
+	allergens := []models.Allergen{}
+	err := u_sushi.GetDB().Select(&allergens, "select * from allergen")
 	if err != nil {
 		u_sushi.HttpError(w, http.StatusInternalServerError, wrapErr(err))
 		return
 	}
-	ingredientsJson, err := json.Marshal(ingredients)
+	allergensJson, err := json.Marshal(allergens)
 	if err != nil {
 		u_sushi.HttpError(w, http.StatusInternalServerError, wrapErr(err))
 		return
 	}
-	fmt.Fprint(w, string(ingredientsJson))
+	fmt.Fprint(w, string(allergensJson))
 }
 
-func UpdateIngredient(w http.ResponseWriter, r *http.Request) {
+func UpdateAllergen(w http.ResponseWriter, r *http.Request) {
 	wrapErr := func(err error) error {
-		return fmt.Errorf("update ingredient: %v", err)
+		return fmt.Errorf("update allergen: %v", err)
 	}
-	var req models.Ingredient
+	var req models.Allergen
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
 		u_sushi.HttpError(w, http.StatusBadRequest, wrapErr(err))
 		return
 	}
 	vars := mux.Vars(r)
-	_, err = u_sushi.GetDB().Exec("update ingredient set name = $1, allergen = $2 where id = $3", req.Name, req.Allergen, vars["id"])
+	_, err = u_sushi.GetDB().Exec("update allergen set name = $1 where id = $2", req.Name, vars["id"])
 	if err != nil {
 		u_sushi.HttpError(w, http.StatusBadRequest, wrapErr(err))
 		return
 	}
 }
 
-func DeleteIngredient(w http.ResponseWriter, r *http.Request) {
+func DeleteAllergen(w http.ResponseWriter, r *http.Request) {
 	wrapErr := func(err error) error {
-		return fmt.Errorf("delete ingredient: %v", err)
+		return fmt.Errorf("delete allergen: %v", err)
 	}
 	vars := mux.Vars(r)
-	_, err := u_sushi.GetDB().Exec("delete from ingredient where id = $1", vars["id"])
+	_, err := u_sushi.GetDB().Exec("delete from allergen where id = $1", vars["id"])
 	if err != nil {
 		u_sushi.HttpError(w, http.StatusBadRequest, wrapErr(err))
 		return

@@ -39,7 +39,7 @@ type Image struct {
 	Image string `json:"image"`
 }
 
-type Product struct {
+type Plate struct {
 	ID          int         `json:"id"`
 	Name        string      `json:"name"`
 	Price       string      `json:"price"`
@@ -64,7 +64,7 @@ type Ingredient struct {
 
 type Command struct {
 	SessionID int           `json:"sessionID" db:"session_id"`
-	ProductID int           `json:"productID" db:"product_id"`
+	PlateID   int           `json:"plateID" db:"plate_id"`
 	At        time.Time     `json:"at"`
 	Quantity  int           `json:"quantity"`
 	Status    CommandStatus `json:"status"`

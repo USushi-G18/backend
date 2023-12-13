@@ -15,28 +15,28 @@ func checkValidCommand(tx *sqlx.Tx, command []CommandRequest, sessionID int) (bo
 	}
 
 	var prevCommand []CommandRequest
-	err = tx.Select(&prevCommand, "select product_id, quantity from command where session_id = $1", sessionID)
+	err = tx.Select(&prevCommand, "select plate_id, quantity from command where session_id = $1", sessionID)
 	if err != nil {
 		return false, err
 	}
 
 	count := make(map[int]int)
 	for _, c := range command {
-		count[c.ProductID] += c.Quantity
+		count[c.PlateID] += c.Quantity
 	}
 	for _, c := range prevCommand {
-		count[c.ProductID] += c.Quantity
+		count[c.PlateID] += c.Quantity
 	}
 
-	var products []struct {
+	var plates []struct {
 		ID    int
 		Limit null.Int
 	}
 	err = u_sushi.GetDB().Select(
-		&products,
+		&plates,
 		`select distinct p.id, p.order_limit as limit 
-			from product p 
-			join command c on c.product_id = p.id 
+			from plate p 
+			join command c on c.plate_id = p.id 
 		where session_id = $1`,
 		sessionID,
 	)
@@ -44,7 +44,7 @@ func checkValidCommand(tx *sqlx.Tx, command []CommandRequest, sessionID int) (bo
 		return false, err
 	}
 
-	for _, p := range products {
+	for _, p := range plates {
 		if p.Limit.Valid && int(p.Limit.Int64)*seating < count[p.ID] {
 			return false, nil
 		}

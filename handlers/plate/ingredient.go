@@ -1,4 +1,4 @@
-package image
+package plate
 
 import (
 	"encoding/json"
@@ -10,17 +10,17 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func CreateImage(w http.ResponseWriter, r *http.Request) {
+func CreateIngredient(w http.ResponseWriter, r *http.Request) {
 	wrapErr := func(err error) error {
-		return fmt.Errorf("create image: %v", err)
+		return fmt.Errorf("create ingredient: %v", err)
 	}
-	var req models.Image
+	var req models.Ingredient
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
 		u_sushi.HttpError(w, http.StatusBadRequest, wrapErr(err))
 		return
 	}
-	_, err = u_sushi.GetDB().NamedExec("insert into image (id, name) values (:id, :name)", &req)
+	_, err = u_sushi.GetDB().NamedExec("insert into ingredient (name, allergen) values (:name, :allergen)", &req)
 	if err != nil {
 		u_sushi.HttpError(w, http.StatusBadRequest, wrapErr(err))
 		return
@@ -28,48 +28,48 @@ func CreateImage(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 }
 
-func ReadImage(w http.ResponseWriter, r *http.Request) {
+func ReadIngredient(w http.ResponseWriter, r *http.Request) {
 	wrapErr := func(err error) error {
-		return fmt.Errorf("read image: %v", err)
+		return fmt.Errorf("read ingredient: %v", err)
 	}
-	images := []models.Image{}
-	err := u_sushi.GetDB().Select(&images, "select * from images")
+	ingredients := []models.Ingredient{}
+	err := u_sushi.GetDB().Select(&ingredients, "select * from ingredient")
 	if err != nil {
 		u_sushi.HttpError(w, http.StatusInternalServerError, wrapErr(err))
 		return
 	}
-	imagesJson, err := json.Marshal(images)
+	ingredientsJson, err := json.Marshal(ingredients)
 	if err != nil {
 		u_sushi.HttpError(w, http.StatusInternalServerError, wrapErr(err))
 		return
 	}
-	fmt.Fprint(w, string(imagesJson))
+	fmt.Fprint(w, string(ingredientsJson))
 }
 
-func UpdateImage(w http.ResponseWriter, r *http.Request) {
+func UpdateIngredient(w http.ResponseWriter, r *http.Request) {
 	wrapErr := func(err error) error {
-		return fmt.Errorf("update image: %v", err)
+		return fmt.Errorf("update ingredient: %v", err)
 	}
-	var req models.Image
+	var req models.Ingredient
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
 		u_sushi.HttpError(w, http.StatusBadRequest, wrapErr(err))
 		return
 	}
 	vars := mux.Vars(r)
-	_, err = u_sushi.GetDB().Exec("update image set image = $1 where id = $2", req.Image, vars["id"])
+	_, err = u_sushi.GetDB().Exec("update ingredient set name = $1, allergen = $2 where id = $3", req.Name, req.Allergen, vars["id"])
 	if err != nil {
 		u_sushi.HttpError(w, http.StatusBadRequest, wrapErr(err))
 		return
 	}
 }
 
-func DeleteImage(w http.ResponseWriter, r *http.Request) {
+func DeleteIngredient(w http.ResponseWriter, r *http.Request) {
 	wrapErr := func(err error) error {
-		return fmt.Errorf("delete image: %v", err)
+		return fmt.Errorf("delete ingredient: %v", err)
 	}
 	vars := mux.Vars(r)
-	_, err := u_sushi.GetDB().Exec("delete from image where id = $1", vars["id"])
+	_, err := u_sushi.GetDB().Exec("delete from ingredient where id = $1", vars["id"])
 	if err != nil {
 		u_sushi.HttpError(w, http.StatusBadRequest, wrapErr(err))
 		return

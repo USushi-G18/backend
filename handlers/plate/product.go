@@ -1,4 +1,4 @@
-package product
+package plate
 
 import (
 	"encoding/json"
@@ -11,18 +11,18 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func CreateProduct(w http.ResponseWriter, r *http.Request) {
+func CreatePlate(w http.ResponseWriter, r *http.Request) {
 	wrapErr := func(err error) error {
-		return fmt.Errorf("create product: %v", err)
+		return fmt.Errorf("create plate: %v", err)
 	}
-	var req models.Product
+	var req models.Plate
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
 		u_sushi.HttpError(w, http.StatusBadRequest, wrapErr(err))
 		return
 	}
 	_, err = u_sushi.GetDB().NamedExec(`
-		insert into product 
+		insert into plate 
 		(name, price, category, menu, description, image_id, order_limit, pieces) 
 		values (:name, :price, :category, :menu, :description, :image_id, :order_limit, :pieces)`,
 		&req,
@@ -31,31 +31,32 @@ func CreateProduct(w http.ResponseWriter, r *http.Request) {
 		u_sushi.HttpError(w, http.StatusBadRequest, wrapErr(err))
 		return
 	}
+	w.WriteHeader(http.StatusCreated)
 }
 
-func ReadProduct(w http.ResponseWriter, r *http.Request) {
+func ReadPlate(w http.ResponseWriter, r *http.Request) {
 	wrapErr := func(err error) error {
-		return fmt.Errorf("read product: %v", err)
+		return fmt.Errorf("read plate: %v", err)
 	}
-	products := []models.Product{}
-	err := u_sushi.GetDB().Select(&products, "select * from product")
+	plates := []models.Plate{}
+	err := u_sushi.GetDB().Select(&plates, "select * from plate")
 	if err != nil {
 		u_sushi.HttpError(w, http.StatusInternalServerError, wrapErr(err))
 		return
 	}
-	productsJson, err := json.Marshal(products)
+	platesJson, err := json.Marshal(plates)
 	if err != nil {
 		u_sushi.HttpError(w, http.StatusInternalServerError, wrapErr(err))
 		return
 	}
-	fmt.Fprint(w, string(productsJson))
+	fmt.Fprint(w, string(platesJson))
 }
 
-func UpdateProduct(w http.ResponseWriter, r *http.Request) {
+func UpdatePlate(w http.ResponseWriter, r *http.Request) {
 	wrapErr := func(err error) error {
-		return fmt.Errorf("update product: %v", err)
+		return fmt.Errorf("update plate: %v", err)
 	}
-	var req models.Product
+	var req models.Plate
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
 		u_sushi.HttpError(w, http.StatusBadRequest, wrapErr(err))
@@ -69,7 +70,7 @@ func UpdateProduct(w http.ResponseWriter, r *http.Request) {
 	}
 	req.ID = id
 	_, err = u_sushi.GetDB().NamedExec(`
-		update product set
+		update plate set
 			name = :name,
 			price = :price,
 			category = :category,
@@ -87,12 +88,12 @@ func UpdateProduct(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func DeleteProduct(w http.ResponseWriter, r *http.Request) {
+func DeletePlate(w http.ResponseWriter, r *http.Request) {
 	wrapErr := func(err error) error {
-		return fmt.Errorf("delete product: %v", err)
+		return fmt.Errorf("delete plate: %v", err)
 	}
 	vars := mux.Vars(r)
-	_, err := u_sushi.GetDB().Exec("delete from product where id = $1", vars["id"])
+	_, err := u_sushi.GetDB().Exec("delete from plate where id = $1", vars["id"])
 	if err != nil {
 		u_sushi.HttpError(w, http.StatusBadRequest, wrapErr(err))
 		return

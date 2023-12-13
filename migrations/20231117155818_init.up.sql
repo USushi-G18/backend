@@ -14,7 +14,7 @@ CREATE TABLE category (
 
 CREATE TYPE menu as ENUM ('Carte', 'Dinner', 'Lunch');
 
-CREATE TABLE product (
+CREATE TABLE plate (
     id SERIAL PRIMARY KEY,
     name TEXT NOT NULL,
     price DECIMAL NOT NULL,
@@ -40,10 +40,10 @@ CREATE TABLE ingredient (
     allergen INT REFERENCES allergen(id)
 );
 
-CREATE TABLE product_ingredient (
-    product_id INT REFERENCES product(id),
+CREATE TABLE plate_ingredient (
+    plate_id INT REFERENCES plate(id),
     ingredient_id INT REFERENCES ingredient(id),
-    PRIMARY KEY (product_id, ingredient_id)
+    PRIMARY KEY (plate_id, ingredient_id)
 );
 
 -- Kitchen
@@ -61,11 +61,11 @@ CREATE TABLE session (
 
 CREATE TABLE command (
     session_id INT NOT NULL REFERENCES session(id),
-    product_id INT NOT NULL REFERENCES product(id),
+    plate_id INT NOT NULL REFERENCES plate(id),
     at TIMESTAMP NOT NULL,
     quantity INT NOT NULL,
     status command_status NOT NULL,
-    PRIMARY KEY (session_id, product_id, at)
+    PRIMARY KEY (session_id, plate_id, at)
 );
 
 -- Login

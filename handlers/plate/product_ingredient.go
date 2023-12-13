@@ -1,4 +1,4 @@
-package product
+package plate
 
 import (
 	"encoding/json"
@@ -10,39 +10,40 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type CreateProductIngredientRequest struct {
+type CreatePlateIngredientRequest struct {
 	IngredientID int
 }
 
-func CreateProductIngredient(w http.ResponseWriter, r *http.Request) {
+func CreatePlateIngredient(w http.ResponseWriter, r *http.Request) {
 	wrapErr := func(err error) error {
-		return fmt.Errorf("create product_ingredient: %v", err)
+		return fmt.Errorf("create plate_ingredient: %v", err)
 	}
-	var req CreateProductIngredientRequest
+	var req CreatePlateIngredientRequest
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
 		u_sushi.HttpError(w, http.StatusBadRequest, wrapErr(err))
 		return
 	}
 	vars := mux.Vars(r)
-	_, err = u_sushi.GetDB().Exec("insert into product_ingredient (product_id, ingredient_id) values ($1, $2)", vars["productID"], req.IngredientID)
+	_, err = u_sushi.GetDB().Exec("insert into plate_ingredient (plate_id, ingredient_id) values ($1, $2)", vars["plateID"], req.IngredientID)
 	if err != nil {
 		u_sushi.HttpError(w, http.StatusBadRequest, wrapErr(err))
 		return
 	}
+	w.WriteHeader(http.StatusCreated)
 }
 
-func ReadProductIngredient(w http.ResponseWriter, r *http.Request) {
+func ReadPlateIngredient(w http.ResponseWriter, r *http.Request) {
 	wrapErr := func(err error) error {
-		return fmt.Errorf("read product_ingredient: %v", err)
+		return fmt.Errorf("read plate_ingredient: %v", err)
 	}
 	vars := mux.Vars(r)
 	ingredients := []models.Ingredient{}
 	err := u_sushi.GetDB().Select(&ingredients, `
-		select i.* from product_ingredient pi 
+		select i.* from plate_ingredient pi 
 			join ingredient i on pi.ingredient_id = i.id
-		where pi.product_id = $1`,
-		vars["productID"],
+		where pi.plate_id = $1`,
+		vars["plateID"],
 	)
 	if err != nil {
 		u_sushi.HttpError(w, http.StatusInternalServerError, wrapErr(err))
@@ -56,12 +57,12 @@ func ReadProductIngredient(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, string(ingredientsJson))
 }
 
-func DeleteProductIngredient(w http.ResponseWriter, r *http.Request) {
+func DeletePlateIngredient(w http.ResponseWriter, r *http.Request) {
 	wrapErr := func(err error) error {
-		return fmt.Errorf("delete product_ingredient: %v", err)
+		return fmt.Errorf("delete plate_ingredient: %v", err)
 	}
 	vars := mux.Vars(r)
-	_, err := u_sushi.GetDB().NamedExec("delete from product_ingredient where product_id = :product_id and ingredient_id = :ingredient_id", &vars)
+	_, err := u_sushi.GetDB().NamedExec("delete from plate_ingredient where plate_id = :plate_id and ingredient_id = :ingredient_id", &vars)
 	if err != nil {
 		u_sushi.HttpError(w, http.StatusBadRequest, wrapErr(err))
 		return

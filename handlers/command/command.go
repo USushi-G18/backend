@@ -12,12 +12,12 @@ import (
 )
 
 var (
-	ErrLimitReached = errors.New("limit for this product has been reached")
+	ErrLimitReached = errors.New("limit for this plate has been reached")
 )
 
 type CommandRequest struct {
-	ProductID int `db:"product_id"`
-	Quantity  int
+	PlateID  int `db:"plate_id"`
+	Quantity int
 }
 
 func CreateCommand(w http.ResponseWriter, r *http.Request) {
@@ -52,7 +52,7 @@ func CreateCommand(w http.ResponseWriter, r *http.Request) {
 	for _, command := range req {
 		commands = append(commands, models.Command{
 			SessionID: int(claims.SessionID.Int64),
-			ProductID: command.ProductID,
+			PlateID:   command.PlateID,
 			At:        at,
 			Quantity:  command.Quantity,
 			Status:    models.CommandOrdered,
@@ -60,8 +60,8 @@ func CreateCommand(w http.ResponseWriter, r *http.Request) {
 	}
 	_, err = tx.NamedExec(
 		`insert into command
-				(session_id, product_id, at, quantity, status) values
-				(:session_id, :product_id, :at, :quantity, :status)`,
+				(session_id, plate_id, at, quantity, status) values
+				(:session_id, :plate_id, :at, :quantity, :status)`,
 		commands)
 	if err != nil {
 		u_sushi.HttpError(w, http.StatusBadRequest, wrapErr(err))
@@ -72,6 +72,7 @@ func CreateCommand(w http.ResponseWriter, r *http.Request) {
 		u_sushi.HttpError(w, http.StatusInternalServerError, wrapErr(err))
 		return
 	}
+	w.WriteHeader(http.StatusCreated)
 }
 
 func ReadClientCommandHistory(w http.ResponseWriter, r *http.Request) {
@@ -117,7 +118,7 @@ func ReadCommandHistory(w http.ResponseWriter, r *http.Request) {
 
 type UpdateOrderStatusRequest struct {
 	SessionID int `db:"session_id"`
-	ProductID int `db:"product_id"`
+	PlateID   int `db:"plate_id"`
 	At        time.Time
 	Status    models.CommandStatus
 }
@@ -134,7 +135,7 @@ func UpdateOrderStatus(w http.ResponseWriter, r *http.Request) {
 	}
 
 	_, err = u_sushi.GetDB().NamedExec(
-		"update command set status = :status where session_id = :session_id and product_id = :product_id and at = :at",
+		"update command set status = :status where session_id = :session_id and plate_id = :plate_id and at = :at",
 		req,
 	)
 	if err != nil {
