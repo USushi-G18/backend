@@ -69,3 +69,7 @@ type Command struct {
 	Quantity  int           `json:"quantity"`
 	Status    CommandStatus `json:"status"`
 }
+
+type ReturningID struct {
+	ID int `json:"id"`
+}

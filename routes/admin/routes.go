@@ -10,17 +10,18 @@ import (
 )
 
 func HandleAll(r *mux.Router) {
-	r.Use(u_sushi.ContentTypeApplicationJsonMiddleware)
-	r.Use(auth.AdminAuthMiddleware)
-	HandleAuth(r)
-	HandlePlate(r)
+	rr := r.PathPrefix("/admin").Subrouter()
+	rr.Use(auth.AdminAuthMiddleware)
+	rr.Use(u_sushi.ContentTypeApplicationJsonMiddleware)
+	HandleAuth(rr)
+	HandlePlate(rr)
 }
 
 func HandleAuth(r *mux.Router) {
 	auth.LoadKey()
-	sr := r.PathPrefix("/auth").Subrouter()
-	sr.HandleFunc("/login", auth.AdminLogin).Methods("POST")
-	sr.HandleFunc("/password/{userType}", auth.ChangePassword).Methods("POST")
+	rr := r.PathPrefix("/auth").Subrouter()
+	rr.HandleFunc("/login", auth.AdminLogin).Methods("POST")
+	rr.HandleFunc("/password/{userType}", auth.ChangePassword).Methods("POST")
 }
 
 func HandlePlate(r *mux.Router) {

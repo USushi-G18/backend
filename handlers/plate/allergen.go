@@ -20,12 +20,19 @@ func CreateAllergen(w http.ResponseWriter, r *http.Request) {
 		u_sushi.HttpError(w, http.StatusBadRequest, wrapErr(err))
 		return
 	}
-	_, err = u_sushi.GetDB().NamedExec("insert into allergen (name) values (:name)", &req)
+	var id int
+	err = u_sushi.NamedGet(&id, "insert into allergen (name) values (:name) returning id", &req)
+	if err != nil {
+		u_sushi.HttpError(w, http.StatusBadRequest, wrapErr(err))
+		return
+	}
+	idJson, err := json.Marshal(models.ReturningID{ID: id})
 	if err != nil {
 		u_sushi.HttpError(w, http.StatusBadRequest, wrapErr(err))
 		return
 	}
 	w.WriteHeader(http.StatusCreated)
+	fmt.Fprint(w, string(idJson))
 }
 
 func ReadAllergen(w http.ResponseWriter, r *http.Request) {

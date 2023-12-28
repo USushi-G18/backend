@@ -21,17 +21,26 @@ func CreatePlate(w http.ResponseWriter, r *http.Request) {
 		u_sushi.HttpError(w, http.StatusBadRequest, wrapErr(err))
 		return
 	}
-	_, err = u_sushi.GetDB().NamedExec(`
-		insert into plate 
+	var id int
+	err = u_sushi.NamedGet(
+		&id,
+		`insert into plate 
 		(name, price, category, menu, description, image_id, order_limit, pieces) 
-		values (:name, :price, :category, :menu, :description, :image_id, :order_limit, :pieces)`,
+		values (:name, :price, :category, :menu, :description, :image_id, :order_limit, :pieces)
+		returning id`,
 		&req,
 	)
 	if err != nil {
 		u_sushi.HttpError(w, http.StatusBadRequest, wrapErr(err))
 		return
 	}
+	idJson, err := json.Marshal(models.ReturningID{ID: id})
+	if err != nil {
+		u_sushi.HttpError(w, http.StatusBadRequest, wrapErr(err))
+		return
+	}
 	w.WriteHeader(http.StatusCreated)
+	fmt.Fprint(w, string(idJson))
 }
 
 func ReadPlate(w http.ResponseWriter, r *http.Request) {
