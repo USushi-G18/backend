@@ -25,8 +25,8 @@ func CreatePlate(w http.ResponseWriter, r *http.Request) {
 	err = u_sushi.NamedGet(
 		&id,
 		`insert into plate 
-		(name, price, category, menu, description, image_id, order_limit, pieces) 
-		values (:name, :price, :category, :menu, :description, :image_id, :order_limit, :pieces)
+		(name, price, category_id, menu, description, image_id, order_limit, pieces) 
+		values (:name, :price, :category_id, :menu, :description, :image_id, :order_limit, :pieces)
 		returning id`,
 		&req,
 	)
@@ -82,7 +82,7 @@ func UpdatePlate(w http.ResponseWriter, r *http.Request) {
 		update plate set
 			name = :name,
 			price = :price,
-			category = :category,
+			category_id = :category_id,
 			menu = :menu,
 			description = :description,
 			image_id = :image_id,

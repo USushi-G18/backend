@@ -43,7 +43,7 @@ type Plate struct {
 	ID          int         `json:"id"`
 	Name        string      `json:"name"`
 	Price       string      `json:"price"`
-	Category    int         `json:"category"`
+	CategoryID  int         `json:"category_id" db:"category_id"`
 	Menu        Menu        `json:"menu"`
 	Description null.String `json:"description"`
 	ImageID     null.Int    `json:"imageID" db:"image_id"`
@@ -57,9 +57,9 @@ type Allergen struct {
 }
 
 type Ingredient struct {
-	ID       int      `json:"id"`
-	Name     string   `json:"name"`
-	Allergen null.Int `json:"allergen"`
+	ID         int      `json:"id"`
+	Name       string   `json:"name"`
+	AllergenID null.Int `json:"allergen_id" db:"allergen_id"`
 }
 
 type Command struct {

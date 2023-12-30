@@ -21,7 +21,7 @@ func CreateIngredient(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var id int
-	err = u_sushi.NamedGet(&id, "insert into ingredient (name, allergen) values (:name, :allergen) returning id", &req)
+	err = u_sushi.NamedGet(&id, "insert into ingredient (name, allergen_id) values (:name, :allergen_id) returning id", &req)
 	if err != nil {
 		u_sushi.HttpError(w, http.StatusBadRequest, wrapErr(err))
 		return
@@ -64,7 +64,7 @@ func UpdateIngredient(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	vars := mux.Vars(r)
-	_, err = u_sushi.GetDB().Exec("update ingredient set name = $1, allergen = $2 where id = $3", req.Name, req.Allergen, vars["id"])
+	_, err = u_sushi.GetDB().Exec("update ingredient set name = $1, allergen_id = $2 where id = $3", req.Name, req.AllergenID, vars["id"])
 	if err != nil {
 		u_sushi.HttpError(w, http.StatusBadRequest, wrapErr(err))
 		return

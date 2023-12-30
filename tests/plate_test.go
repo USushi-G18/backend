@@ -21,7 +21,7 @@ func createPlate(name string) int {
 	p := plate
 	p.Name = name
 	categoryID := createCategory(fmt.Sprintf("category-plate-%s", p.Name))
-	p.Category = categoryID
+	p.CategoryID = categoryID
 	w := executeRequest("POST", "/admin/plate", p)
 
 	var id models.ReturningID
@@ -36,7 +36,7 @@ func TestCreatePlate(t *testing.T) {
 	p := plate
 	p.Name = "test-create-plate"
 	categoryID := createCategory(fmt.Sprintf("category-plate-%s", p.Name))
-	p.Category = categoryID
+	p.CategoryID = categoryID
 	w := executeRequest("POST", "/admin/plate", p)
 	assert.Equal(t, http.StatusCreated, w.Code)
 }
@@ -57,7 +57,7 @@ func TestUpdatePlate(t *testing.T) {
 	p := plate
 	p.Name = "test-update-plate-updated"
 	categoryID := createCategory(fmt.Sprintf("category-plate-%s", p.Name))
-	p.Category = categoryID
+	p.CategoryID = categoryID
 	w := executeRequest("PUT", url, p)
 	assert.Equal(t, http.StatusOK, w.Code)
 }

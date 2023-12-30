@@ -18,7 +18,7 @@ CREATE TABLE plate (
     id SERIAL PRIMARY KEY,
     name TEXT NOT NULL,
     price DECIMAL NOT NULL,
-    category INT NOT NULL REFERENCES category(id),
+    category_id INT NOT NULL REFERENCES category(id),
     menu menu NOT NULL,
     description text,
     image_id INT REFERENCES image(id),
@@ -37,7 +37,7 @@ CREATE TABLE allergen (
 CREATE TABLE ingredient (
     id SERIAL PRIMARY KEY,
     name TEXT UNIQUE,
-    allergen INT REFERENCES allergen(id)
+    allergen_id INT REFERENCES allergen(id)
 );
 
 CREATE TABLE plate_ingredient (
