@@ -14,6 +14,12 @@ import (
 	"gopkg.in/guregu/null.v4"
 )
 
+// This is just a toy project so we wont implement refresh tokens
+// just an access token with a really long expiration time
+const (
+	TokenExpirationTime = 7 * 24 * time.Hour
+)
+
 var (
 	ErrAuthorizationRequired = errors.New("bearer authorization required")
 )
@@ -55,7 +61,7 @@ func CreateJWT(userType models.UserType, sessionID null.Int) (string, error) {
 	claims := jwt.MapClaims{
 		"iss":      "u-sushi",
 		"iat":      now.Unix(),
-		"exp":      now.Add(time.Hour).Unix(),
+		"exp":      now.Add(TokenExpirationTime).Unix(),
 		"userType": userType,
 	}
 	if sessionID.Valid {

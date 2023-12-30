@@ -15,7 +15,7 @@ var (
 	ErrLimitReached = errors.New("limit for this plate has been reached")
 )
 
-type CommandRequest struct {
+type OrderRequest struct {
 	PlateID  int `db:"plate_id"`
 	Quantity int
 }
@@ -29,7 +29,7 @@ func CreateCommand(w http.ResponseWriter, r *http.Request) {
 		u_sushi.HttpError(w, http.StatusBadRequest, wrapErr(err))
 		return
 	}
-	var req []CommandRequest
+	var req []OrderRequest
 	err = json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
 		u_sushi.HttpError(w, http.StatusBadRequest, wrapErr(err))
@@ -103,7 +103,7 @@ func ReadCommandHistory(w http.ResponseWriter, r *http.Request) {
 		return fmt.Errorf("read command history: %v", err)
 	}
 	command := []models.Command{}
-	err := u_sushi.GetDB().Select(&command, "select * from command where")
+	err := u_sushi.GetDB().Select(&command, "select * from command")
 	if err != nil {
 		u_sushi.HttpError(w, http.StatusInternalServerError, wrapErr(err))
 		return

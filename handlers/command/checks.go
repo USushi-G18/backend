@@ -7,14 +7,14 @@ import (
 	"gopkg.in/guregu/null.v4"
 )
 
-func checkValidCommand(tx *sqlx.Tx, command []CommandRequest, sessionID int) (bool, error) {
+func checkValidCommand(tx *sqlx.Tx, command []OrderRequest, sessionID int) (bool, error) {
 	var seating int
 	err := tx.QueryRow("select seating from session where id = $1", sessionID).Scan(&seating)
 	if err != nil {
 		return false, err
 	}
 
-	var prevCommand []CommandRequest
+	var prevCommand []OrderRequest
 	err = tx.Select(&prevCommand, "select plate_id, quantity from command where session_id = $1", sessionID)
 	if err != nil {
 		return false, err
