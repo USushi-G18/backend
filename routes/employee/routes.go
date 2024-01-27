@@ -3,6 +3,7 @@ package routes
 import (
 	u_sushi "u-sushi"
 	"u-sushi/auth"
+	hauth "u-sushi/handlers/auth"
 	"u-sushi/handlers/command"
 
 	"github.com/gorilla/mux"
@@ -20,7 +21,7 @@ func HandleAll(r *mux.Router) {
 func HandleAuth(r *mux.Router) {
 	auth.LoadKey()
 	rr := r.PathPrefix("/auth").Subrouter()
-	rr.HandleFunc("/login", auth.EmployeeLogin).Methods("POST")
+	rr.HandleFunc("/login", hauth.EmployeeLogin).Methods("POST")
 }
 
 func HandleOrderStatus(r *mux.Router) {

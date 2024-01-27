@@ -3,6 +3,7 @@ package routes
 import (
 	u_sushi "u-sushi"
 	"u-sushi/auth"
+	hauth "u-sushi/handlers/auth"
 	"u-sushi/handlers/command"
 	"u-sushi/handlers/image"
 	"u-sushi/handlers/plate"
@@ -22,7 +23,7 @@ func HandleAll(r *mux.Router) {
 func HandleAuth(r *mux.Router) {
 	auth.LoadKey()
 	rr := r.PathPrefix("/auth").Subrouter()
-	rr.HandleFunc("/login", auth.ClientLogin).Methods("POST")
+	rr.HandleFunc("/login", hauth.ClientLogin).Methods("POST")
 }
 
 func HandleCommand(r *mux.Router) {

@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 	u_sushi "u-sushi"
+	"u-sushi/auth"
 	"u-sushi/models"
 
 	"github.com/gorilla/mux"
@@ -47,14 +48,14 @@ func loginUser(w http.ResponseWriter, r *http.Request, userType models.UserType)
 		u_sushi.HttpError(w, http.StatusInternalServerError, wrapErr(err))
 		return
 	}
-	if verified, err := VerifyPassword(req.Password, encodedHash); err != nil {
+	if verified, err := auth.VerifyPassword(req.Password, encodedHash); err != nil {
 		u_sushi.HttpError(w, http.StatusInternalServerError, wrapErr(err))
 		return
 	} else if !verified {
-		u_sushi.HttpError(w, http.StatusUnauthorized, wrapErr(ErrWrongPassword))
+		u_sushi.HttpError(w, http.StatusUnauthorized, wrapErr(auth.ErrWrongPassword))
 		return
 	}
-	token, err := CreateJWT(userType, null.Int{})
+	token, err := auth.CreateJWT(userType, null.Int{})
 	if err != nil {
 		u_sushi.HttpError(w, http.StatusInternalServerError, wrapErr(err))
 		return
@@ -92,11 +93,11 @@ func ClientLogin(w http.ResponseWriter, r *http.Request) {
 		u_sushi.HttpError(w, http.StatusInternalServerError, wrapErr(err))
 		return
 	}
-	if verified, err := VerifyPassword(req.Password, encodedHash); err != nil {
+	if verified, err := auth.VerifyPassword(req.Password, encodedHash); err != nil {
 		u_sushi.HttpError(w, http.StatusInternalServerError, wrapErr(err))
 		return
 	} else if !verified {
-		u_sushi.HttpError(w, http.StatusUnauthorized, wrapErr(ErrWrongPassword))
+		u_sushi.HttpError(w, http.StatusUnauthorized, wrapErr(auth.ErrWrongPassword))
 		return
 	}
 	var sessionID int
@@ -111,7 +112,7 @@ func ClientLogin(w http.ResponseWriter, r *http.Request) {
 		u_sushi.HttpError(w, http.StatusInternalServerError, wrapErr(err))
 		return
 	}
-	token, err := CreateJWT(models.UserClient, null.IntFrom(int64(sessionID)))
+	token, err := auth.CreateJWT(models.UserClient, null.IntFrom(int64(sessionID)))
 	if err != nil {
 		u_sushi.HttpError(w, http.StatusInternalServerError, wrapErr(err))
 		return
@@ -149,15 +150,15 @@ func ChangePassword(w http.ResponseWriter, r *http.Request) {
 		u_sushi.HttpError(w, http.StatusInternalServerError, wrapErr(err))
 		return
 	}
-	verified, err := VerifyPassword(req.OldPassword, encodedHash)
+	verified, err := auth.VerifyPassword(req.OldPassword, encodedHash)
 	if err != nil {
 		u_sushi.HttpError(w, http.StatusInternalServerError, wrapErr(err))
 		return
 	} else if !verified {
-		u_sushi.HttpError(w, http.StatusUnauthorized, wrapErr(ErrWrongPassword))
+		u_sushi.HttpError(w, http.StatusUnauthorized, wrapErr(auth.ErrWrongPassword))
 		return
 	}
-	newHash, err := HashPassword(req.NewPassword, StdArgon2Params)
+	newHash, err := auth.HashPassword(req.NewPassword, auth.StdArgon2Params)
 	if err != nil {
 		u_sushi.HttpError(w, http.StatusInternalServerError, wrapErr(err))
 		return
