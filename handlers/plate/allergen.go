@@ -6,34 +6,7 @@ import (
 	"net/http"
 	u_sushi "u-sushi"
 	"u-sushi/models"
-
-	"github.com/gorilla/mux"
 )
-
-func CreateAllergen(w http.ResponseWriter, r *http.Request) {
-	wrapErr := func(err error) error {
-		return fmt.Errorf("create allergen: %v", err)
-	}
-	var req models.Allergen
-	err := json.NewDecoder(r.Body).Decode(&req)
-	if err != nil {
-		u_sushi.HttpError(w, http.StatusBadRequest, wrapErr(err))
-		return
-	}
-	var id int
-	err = u_sushi.NamedGet(&id, "insert into allergen (name) values (:name) returning id", &req)
-	if err != nil {
-		u_sushi.HttpError(w, http.StatusBadRequest, wrapErr(err))
-		return
-	}
-	idJson, err := json.Marshal(models.ReturningID{ID: id})
-	if err != nil {
-		u_sushi.HttpError(w, http.StatusInternalServerError, wrapErr(err))
-		return
-	}
-	w.WriteHeader(http.StatusCreated)
-	fmt.Fprint(w, string(idJson))
-}
 
 func ReadAllergen(w http.ResponseWriter, r *http.Request) {
 	wrapErr := func(err error) error {
@@ -51,34 +24,4 @@ func ReadAllergen(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fmt.Fprint(w, string(allergensJson))
-}
-
-func UpdateAllergen(w http.ResponseWriter, r *http.Request) {
-	wrapErr := func(err error) error {
-		return fmt.Errorf("update allergen: %v", err)
-	}
-	var req models.Allergen
-	err := json.NewDecoder(r.Body).Decode(&req)
-	if err != nil {
-		u_sushi.HttpError(w, http.StatusBadRequest, wrapErr(err))
-		return
-	}
-	vars := mux.Vars(r)
-	_, err = u_sushi.GetDB().Exec("update allergen set name = $1 where id = $2", req.Name, vars["id"])
-	if err != nil {
-		u_sushi.HttpError(w, http.StatusBadRequest, wrapErr(err))
-		return
-	}
-}
-
-func DeleteAllergen(w http.ResponseWriter, r *http.Request) {
-	wrapErr := func(err error) error {
-		return fmt.Errorf("delete allergen: %v", err)
-	}
-	vars := mux.Vars(r)
-	_, err := u_sushi.GetDB().Exec("delete from allergen where id = $1", vars["id"])
-	if err != nil {
-		u_sushi.HttpError(w, http.StatusBadRequest, wrapErr(err))
-		return
-	}
 }

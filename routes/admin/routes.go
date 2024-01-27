@@ -53,17 +53,11 @@ func HandleCategory(r *mux.Router) {
 }
 
 func HandleAllergen(r *mux.Router) {
-	r.HandleFunc("/allergen", plate.CreateAllergen).Methods("POST")
 	r.HandleFunc("/allergen", plate.ReadAllergen).Methods("GET")
-	r.HandleFunc("/allergen/{id}", plate.UpdateAllergen).Methods("PUT")
-	r.HandleFunc("/allergen/{id}", plate.DeleteAllergen).Methods("DELETE")
 }
 
 func HandleIngredient(r *mux.Router) {
-	r.HandleFunc("/ingredient", plate.CreateIngredient).Methods("POST")
 	r.HandleFunc("/ingredient", plate.ReadIngredient).Methods("GET")
-	r.HandleFunc("/ingredient/{id}", plate.UpdateIngredient).Methods("PUT")
-	r.HandleFunc("/ingredient/{id}", plate.DeleteIngredient).Methods("DELETE")
 }
 
 func HandlePlateIngredient(r *mux.Router) {
