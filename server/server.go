@@ -7,9 +7,9 @@ import (
 
 	u_sushi "u-sushi"
 
-	admin_routes "u-sushi/routes/admin"
-	client_routes "u-sushi/routes/client"
-	employee_routes "u-sushi/routes/employee"
+	admin_routes "u-sushi/server/routes/admin"
+	client_routes "u-sushi/server/routes/client"
+	employee_routes "u-sushi/server/routes/employee"
 
 	"github.com/gorilla/mux"
 )
