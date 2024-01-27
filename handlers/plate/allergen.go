@@ -28,7 +28,7 @@ func CreateAllergen(w http.ResponseWriter, r *http.Request) {
 	}
 	idJson, err := json.Marshal(models.ReturningID{ID: id})
 	if err != nil {
-		u_sushi.HttpError(w, http.StatusBadRequest, wrapErr(err))
+		u_sushi.HttpError(w, http.StatusInternalServerError, wrapErr(err))
 		return
 	}
 	w.WriteHeader(http.StatusCreated)

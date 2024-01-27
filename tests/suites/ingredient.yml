@@ -1,0 +1,13 @@
+name: test ingredient
+
+testcases:
+  - name: read ingredient admin
+    steps:
+      - type: read
+        base_url: "{{.admin_url}}"
+        path: ingredient
+  - name: read ingredient client
+    steps:
+      - type: read
+        base_url: "{{.client_url}}"
+        path: ingredient

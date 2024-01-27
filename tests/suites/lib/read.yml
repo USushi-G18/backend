@@ -1,0 +1,14 @@
+executor: read
+input:
+  base_url: {}
+  path: {}
+steps:
+  - type: with_login
+    base_login_url: "{{.input.base_url}}"
+  - type: http
+    method: GET
+    url: "{{.input.base_url}}/{{.input.path}}"
+    headers:
+      Authorization: "{{.result.token}}"
+    assertions:
+      - result.statuscode ShouldEqual 200

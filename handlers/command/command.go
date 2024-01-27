@@ -20,6 +20,10 @@ type OrderRequest struct {
 	Quantity int
 }
 
+type CreateCommandResponse struct {
+	At time.Time `json:"at"`
+}
+
 func CreateCommand(w http.ResponseWriter, r *http.Request) {
 	wrapErr := func(err error) error {
 		return fmt.Errorf("create command: %v", err)
@@ -72,7 +76,13 @@ func CreateCommand(w http.ResponseWriter, r *http.Request) {
 		u_sushi.HttpError(w, http.StatusInternalServerError, wrapErr(err))
 		return
 	}
+	atJson, err := json.Marshal(CreateCommandResponse{At: at})
+	if err != nil {
+		u_sushi.HttpError(w, http.StatusInternalServerError, wrapErr(err))
+		return
+	}
 	w.WriteHeader(http.StatusCreated)
+	fmt.Fprint(w, string(atJson))
 }
 
 func ReadClientCommandHistory(w http.ResponseWriter, r *http.Request) {
@@ -103,7 +113,7 @@ func ReadCommandHistory(w http.ResponseWriter, r *http.Request) {
 		return fmt.Errorf("read command history: %v", err)
 	}
 	command := []models.Command{}
-	err := u_sushi.GetDB().Select(&command, "select * from command")
+	err := u_sushi.GetDB().Select(&command, "select * from command where status != 'Delivered'")
 	if err != nil {
 		u_sushi.HttpError(w, http.StatusInternalServerError, wrapErr(err))
 		return

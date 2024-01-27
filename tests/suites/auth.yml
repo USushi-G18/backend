@@ -1,0 +1,42 @@
+name: test auth
+
+testcases:
+  - name: change password admin
+    steps:
+      - type: update
+        method: POST
+        base_url: "{{.admin_url}}"
+        path: "auth/password/admin"
+        bodyFile: "models/change_password.json"
+  - name: change password client
+    steps:
+      - type: update
+        method: POST
+        base_url: "{{.admin_url}}"
+        path: "auth/password/client"
+        bodyFile: "models/change_password.json"
+  - name: change password employee
+    steps:
+      - type: update
+        method: POST
+        base_url: "{{.admin_url}}"
+        path: "auth/password/employee"
+        bodyFile: "models/change_password.json"
+  - name: login with wrong password admin
+    steps:
+      - type: with_login
+        password: "wrong-password"
+        expected_code: 401
+        base_login_url: "{{.admin_url}}"
+  - name: login with wrong password client
+    steps:
+      - type: with_login
+        password: "wrong-password"
+        expected_code: 401
+        base_login_url: "{{.client_url}}"
+  - name: login with wrong password employee
+    steps:
+      - type: with_login
+        password: "wrong-password"
+        expected_code: 401
+        base_login_url: "{{.employee_url}}"

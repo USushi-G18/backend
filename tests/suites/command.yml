@@ -1,0 +1,20 @@
+name: test command
+
+testcases:
+  - name: create command
+    steps:
+      - type: create
+        base_url: "{{.client_url}}"
+        path: command
+        bodyFile: "models/command.json"
+  - name: read command
+    steps:
+      - type: read
+        base_url: "{{.employee_url}}"
+        path: command
+  - name: update command status
+    steps:
+      - type: update
+        base_url: "{{.employee_url}}"
+        path: order-status
+        bodyFile: "models/update_command_status.json"

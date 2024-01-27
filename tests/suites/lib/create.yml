@@ -1,0 +1,34 @@
+executor: create
+input:
+  base_url: "{{.admin_url}}"
+  path: {}
+  bodyFile: {}
+steps:
+  - type: with_login
+    base_login_url: "{{.input.base_url}}"
+    vars:
+      token:
+        from: result.token
+    # test malformed input
+  - type: http
+    method: POST
+    url: "{{.input.base_url}}/{{.input.path}}"
+    headers:
+      Authorization: "{{.token}}"
+    body: "{"
+    assertions:
+      - result.statuscode ShouldEqual 400
+    # test correct input
+  - type: http
+    method: POST
+    url: "{{.input.base_url}}/{{.input.path}}"
+    headers:
+      Authorization: "{{.token}}"
+    bodyFile: "{{.input.bodyFile}}"
+    assertions:
+      - result.statuscode ShouldEqual 201
+    vars:
+      body:
+        from: result.body
+output:
+  body: "{{.body}}"

@@ -4,11 +4,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 	u_sushi "u-sushi"
 	"u-sushi/models"
 
 	"github.com/gorilla/mux"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 	"gopkg.in/guregu/null.v4"
 )
 
@@ -140,7 +143,8 @@ func ChangePassword(w http.ResponseWriter, r *http.Request) {
 	}
 	var encodedHash string
 	vars := mux.Vars(r)
-	err = u_sushi.GetDB().QueryRow("select password from sushi_user where user_type = $1", vars["userType"]).Scan(&encodedHash)
+	userType := cases.Title(language.English).String(strings.ToLower(vars["userType"]))
+	err = u_sushi.GetDB().QueryRow("select password from sushi_user where user_type = $1", userType).Scan(&encodedHash)
 	if err != nil {
 		u_sushi.HttpError(w, http.StatusInternalServerError, wrapErr(err))
 		return
@@ -158,7 +162,7 @@ func ChangePassword(w http.ResponseWriter, r *http.Request) {
 		u_sushi.HttpError(w, http.StatusInternalServerError, wrapErr(err))
 		return
 	}
-	_, err = u_sushi.GetDB().Exec("update sushi_user set password = $1 where user_type = $2", newHash, vars["userType"])
+	_, err = u_sushi.GetDB().Exec("update sushi_user set password = $1 where user_type = $2", newHash, userType)
 	if err != nil {
 		u_sushi.HttpError(w, http.StatusInternalServerError, wrapErr(err))
 		return

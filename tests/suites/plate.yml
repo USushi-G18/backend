@@ -1,0 +1,32 @@
+name: test plate
+
+testcases:
+  - name: create plate
+    steps:
+      - type: create
+        path: plate
+        bodyFile: "models/plate.json"
+        assertions:
+          - result.bodyjson ShouldContainKey id
+        vars:
+          id:
+            from: result.bodyjson.id
+  - name: read plate admin
+    steps:
+      - type: read
+        base_url: "{{.admin_url}}"
+        path: plate
+  - name: read plate client
+    steps:
+      - type: read
+        base_url: "{{.client_url}}"
+        path: plate
+  - name: update plate
+    steps:
+      - type: update
+        path: "plate/{{.create-plate.id}}"
+        bodyFile: "models/plate.json"
+  - name: delete plate
+    steps:
+      - type: delete
+        path: "plate/{{.create-plate.id}}"

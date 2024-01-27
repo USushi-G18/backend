@@ -24,7 +24,7 @@ func HandleAuth(r *mux.Router) {
 }
 
 func HandleOrderStatus(r *mux.Router) {
-	r.HandleFunc("/order-status", command.UpdateOrderStatus).Methods("POST")
+	r.HandleFunc("/order-status", command.UpdateOrderStatus).Methods("PUT")
 }
 
 func HandleCommand(r *mux.Router) {

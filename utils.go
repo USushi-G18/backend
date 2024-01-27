@@ -26,7 +26,7 @@ func NamedGet(dest interface{}, query string, arg interface{}) error {
 	if err != nil {
 		return err
 	}
-	return GetDB().Get(dest, query, args...)
+	return GetDB().QueryRowx(query, args...).Scan(dest)
 }
 
 func ContentTypeApplicationJsonMiddleware(next http.Handler) http.Handler {

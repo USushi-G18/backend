@@ -62,7 +62,7 @@ func DeletePlateIngredient(w http.ResponseWriter, r *http.Request) {
 		return fmt.Errorf("delete plate_ingredient: %v", err)
 	}
 	vars := mux.Vars(r)
-	_, err := u_sushi.GetDB().NamedExec("delete from plate_ingredient where plate_id = :plate_id and ingredient_id = :ingredient_id", &vars)
+	_, err := u_sushi.GetDB().Exec("delete from plate_ingredient where plate_id = $1 and ingredient_id = $2", vars["plateID"], vars["ingredientID"])
 	if err != nil {
 		u_sushi.HttpError(w, http.StatusBadRequest, wrapErr(err))
 		return

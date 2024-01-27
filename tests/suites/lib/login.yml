@@ -1,0 +1,25 @@
+executor: with_login
+input:
+  password: "u-sushi"
+  expected_code: 200
+  base_login_url: {}
+steps:
+  - type: http
+    method: POST
+    url: "{{.input.base_login_url}}/auth/login"
+    body: >-
+      {
+        "password": "{{.input.password}}",
+        "tableNumber": 1,
+        "menu": "Lunch",
+        "seatings": 1
+      }
+    assertions:
+      - result.statuscode ShouldEqual {{.input.expected_code}}
+  - type: exec
+    script: echo Bearer {{.result.bodyjson.token}}
+    vars:
+      token:
+        from: result.systemout
+output:
+  token: "{{.token}}"

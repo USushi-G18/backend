@@ -1,0 +1,22 @@
+name: test plate ingredient
+
+testcases:
+  - name: create plate ingredient
+    steps:
+      - type: create
+        path: "plate/1/ingredient"
+        bodyFile: "models/plate_ingredient.json"
+  - name: read plate ingredient admin
+    steps:
+      - type: read
+        base_url: "{{.admin_url}}"
+        path: "plate/1/ingredient"
+  - name: read plate ingredient client
+    steps:
+      - type: read
+        base_url: "{{.client_url}}"
+        path: "plate/1/ingredient"
+  - name: delete plate ingredient
+    steps:
+      - type: delete
+        path: "plate/1/ingredient/1"

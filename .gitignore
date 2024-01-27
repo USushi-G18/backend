@@ -4,3 +4,8 @@
 build/
 
 secrets/
+
+# integration test output
+**/coverage.out
+**/coverage.html
+**/venom*

@@ -66,7 +66,7 @@ func HandleIngredient(r *mux.Router) {
 }
 
 func HandlePlateIngredient(r *mux.Router) {
-	r.HandleFunc("/plate-ingredient/{plateID}", plate.CreatePlateIngredient).Methods("POST")
-	r.HandleFunc("/plate-ingredient/{plateID}", plate.ReadPlateIngredient).Methods("GET")
-	r.HandleFunc("/plate-ingredient/{plateID}/{ingredientID}", plate.DeletePlateIngredient).Methods("DELETE")
+	r.HandleFunc("/plate/{plateID}/ingredient", plate.CreatePlateIngredient).Methods("POST")
+	r.HandleFunc("/plate/{plateID}/ingredient", plate.ReadPlateIngredient).Methods("GET")
+	r.HandleFunc("/plate/{plateID}/ingredient/{ingredientID}", plate.DeletePlateIngredient).Methods("DELETE")
 }

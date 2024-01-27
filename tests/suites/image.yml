@@ -1,0 +1,32 @@
+name: test image
+
+testcases:
+  - name: create image
+    steps:
+      - type: create
+        path: image
+        bodyFile: "models/image.json"
+        assertions:
+          - result.bodyjson ShouldContainKey id
+        vars:
+          id:
+            from: result.bodyjson.id
+  - name: read image admin
+    steps:
+      - type: read
+        base_url: "{{.admin_url}}"
+        path: image
+  - name: read image client
+    steps:
+      - type: read
+        base_url: "{{.client_url}}"
+        path: image
+  - name: update image
+    steps:
+      - type: update
+        path: "image/{{.create-image.id}}"
+        bodyFile: "models/image.json"
+  - name: delete image
+    steps:
+      - type: delete
+        path: "image/{{.create-image.id}}"

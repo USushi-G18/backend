@@ -21,14 +21,14 @@ func CreateImage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var id int
-	err = u_sushi.NamedGet(&id, "insert into image (id, name) values (:id, :name) returning id", &req)
+	err = u_sushi.NamedGet(&id, "insert into image (image) values (:image) returning id", &req)
 	if err != nil {
 		u_sushi.HttpError(w, http.StatusBadRequest, wrapErr(err))
 		return
 	}
 	idJson, err := json.Marshal(models.ReturningID{ID: id})
 	if err != nil {
-		u_sushi.HttpError(w, http.StatusBadRequest, wrapErr(err))
+		u_sushi.HttpError(w, http.StatusInternalServerError, wrapErr(err))
 		return
 	}
 	w.WriteHeader(http.StatusCreated)
@@ -40,7 +40,7 @@ func ReadImage(w http.ResponseWriter, r *http.Request) {
 		return fmt.Errorf("read image: %v", err)
 	}
 	images := []models.Image{}
-	err := u_sushi.GetDB().Select(&images, "select * from images")
+	err := u_sushi.GetDB().Select(&images, "select * from image")
 	if err != nil {
 		u_sushi.HttpError(w, http.StatusInternalServerError, wrapErr(err))
 		return

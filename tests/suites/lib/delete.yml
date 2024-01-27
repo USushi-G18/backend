@@ -1,0 +1,15 @@
+executor: delete
+input:
+  base_url: "{{.admin_url}}"
+  path: {}
+steps:
+  - type: with_login
+    base_login_url: "{{.input.base_url}}"
+  - type: http
+    method: DELETE
+    url: "{{.input.base_url}}/{{.input.path}}"
+    headers:
+      Authorization: "{{.result.token}}"
+    bodyFile: "{{.input.bodyFile}}"
+    assertions:
+      - result.statuscode ShouldEqual 200

@@ -1,0 +1,13 @@
+name: test allergen
+
+testcases:
+  - name: read allergen admin
+    steps:
+      - type: read
+        base_url: "{{.admin_url}}"
+        path: allergen
+  - name: read allergen client
+    steps:
+      - type: read
+        base_url: "{{.client_url}}"
+        path: allergen
