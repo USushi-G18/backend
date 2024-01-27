@@ -7,6 +7,8 @@ testcases:
         base_url: "{{.client_url}}"
         path: command
         bodyFile: "models/command.json"
+        assertions:
+          - result.bodyjson ShouldContainKey at
   - name: read command
     steps:
       - type: read
