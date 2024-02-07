@@ -12,6 +12,7 @@ import (
 	employee_routes "u-sushi/server/routes/employee"
 
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 )
 
 func StartServer() {
@@ -28,7 +29,8 @@ func StartServer() {
 
 		r := mux.NewRouter()
 		admin_routes.HandleAll(r)
-		err = http.ListenAndServe(":8081", r)
+		c := cors.AllowAll().Handler(r)
+		err = http.ListenAndServe(":8081", c)
 		if err != nil {
 			log.Fatalln(err)
 		}
@@ -40,7 +42,8 @@ func StartServer() {
 		r := mux.NewRouter()
 		client_routes.HandleAll(r)
 		employee_routes.HandleAll(r)
-		err = http.ListenAndServe(":8082", r)
+		c := cors.AllowAll().Handler(r)
+		err = http.ListenAndServe(":8082", c)
 		if err != nil {
 			log.Fatalln(err)
 		}

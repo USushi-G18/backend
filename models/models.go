@@ -70,6 +70,15 @@ type Command struct {
 	Status    CommandStatus `json:"status"`
 }
 
+type Session struct {
+	ID          int       `json:"id"`
+	StartAt     time.Time `json:"startAt" db:"start_at"`
+	EndAt       null.Time `json:"endAt" db:"end_at"`
+	TableNumber int       `json:"tableNumber" db:"table_number"`
+	Menu        Menu      `json:"menu"`
+	Seating     int       `json:"seating"`
+}
+
 type ReturningID struct {
 	ID int `json:"id"`
 }

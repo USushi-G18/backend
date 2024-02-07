@@ -9,6 +9,8 @@ import (
 	u_sushi "u-sushi"
 	"u-sushi/auth"
 	"u-sushi/models"
+
+	"github.com/gorilla/mux"
 )
 
 var (
@@ -16,8 +18,8 @@ var (
 )
 
 type OrderRequest struct {
-	PlateID  int `db:"plate_id"`
-	Quantity int
+	PlateID  int `json:"plateID" db:"plate_id"`
+	Quantity int `json:"quantity"`
 }
 
 type CreateCommandResponse struct {
@@ -152,4 +154,23 @@ func UpdateOrderStatus(w http.ResponseWriter, r *http.Request) {
 		u_sushi.HttpError(w, http.StatusBadRequest, wrapErr(err))
 		return
 	}
+}
+
+func ReadSession(w http.ResponseWriter, r *http.Request) {
+	wrapErr := func(err error) error {
+		return fmt.Errorf("read session: %v", err)
+	}
+	var session models.Session
+	vars := mux.Vars(r)
+	err := u_sushi.GetDB().Get(&session, "select * from session where id = $1", vars["id"])
+	if err != nil {
+		u_sushi.HttpError(w, http.StatusInternalServerError, wrapErr(err))
+		return
+	}
+	sessionJson, err := json.Marshal(session)
+	if err != nil {
+		u_sushi.HttpError(w, http.StatusInternalServerError, wrapErr(err))
+		return
+	}
+	fmt.Fprint(w, string(sessionJson))
 }

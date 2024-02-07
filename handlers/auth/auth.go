@@ -74,7 +74,7 @@ type ClientLoginRequest struct {
 	Password    string
 	TableNumber int
 	Menu        models.Menu
-	Seatings    int
+	Seating     int
 }
 
 func ClientLogin(w http.ResponseWriter, r *http.Request) {
@@ -106,7 +106,7 @@ func ClientLogin(w http.ResponseWriter, r *http.Request) {
 		time.Now(),
 		req.TableNumber,
 		req.Menu,
-		req.Seatings,
+		req.Seating,
 	).Scan(&sessionID)
 	if err != nil {
 		u_sushi.HttpError(w, http.StatusInternalServerError, wrapErr(err))

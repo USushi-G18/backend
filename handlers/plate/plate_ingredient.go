@@ -5,20 +5,19 @@ import (
 	"fmt"
 	"net/http"
 	u_sushi "u-sushi"
-	"u-sushi/models"
 
 	"github.com/gorilla/mux"
 )
 
-type CreatePlateIngredientRequest struct {
-	IngredientID int
+type plateIngredientID struct {
+	IngredientID int `json:"ingredientID" db:"ingredient_id"`
 }
 
 func CreatePlateIngredient(w http.ResponseWriter, r *http.Request) {
 	wrapErr := func(err error) error {
 		return fmt.Errorf("create plate_ingredient: %v", err)
 	}
-	var req CreatePlateIngredientRequest
+	var req plateIngredientID
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
 		u_sushi.HttpError(w, http.StatusBadRequest, wrapErr(err))
@@ -38,9 +37,9 @@ func ReadPlateIngredient(w http.ResponseWriter, r *http.Request) {
 		return fmt.Errorf("read plate_ingredient: %v", err)
 	}
 	vars := mux.Vars(r)
-	ingredients := []models.Ingredient{}
+	ingredients := []plateIngredientID{}
 	err := u_sushi.GetDB().Select(&ingredients, `
-		select i.* from plate_ingredient pi 
+		select pi.ingredient_id from plate_ingredient pi 
 			join ingredient i on pi.ingredient_id = i.id
 		where pi.plate_id = $1`,
 		vars["plateID"],

@@ -2,16 +2,21 @@ package command
 
 import (
 	u_sushi "u-sushi"
+	"u-sushi/models"
 
 	"github.com/jmoiron/sqlx"
 	"gopkg.in/guregu/null.v4"
 )
 
 func checkValidCommand(tx *sqlx.Tx, command []OrderRequest, sessionID int) (bool, error) {
-	var seating int
-	err := tx.QueryRow("select seating from session where id = $1", sessionID).Scan(&seating)
+	var session models.Session
+	err := tx.Get(&session, "select * from session where id = $1", sessionID)
 	if err != nil {
 		return false, err
+	}
+
+	if session.Menu == models.MenuCarte {
+		return true, nil
 	}
 
 	var prevCommand []OrderRequest
@@ -45,7 +50,7 @@ func checkValidCommand(tx *sqlx.Tx, command []OrderRequest, sessionID int) (bool
 	}
 
 	for _, p := range plates {
-		if p.Limit.Valid && int(p.Limit.Int64)*seating < count[p.ID] {
+		if p.Limit.Valid && int(p.Limit.Int64)*session.Seating < count[p.ID] {
 			return false, nil
 		}
 	}

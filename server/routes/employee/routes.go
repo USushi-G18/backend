@@ -30,4 +30,5 @@ func HandleOrderStatus(r *mux.Router) {
 
 func HandleCommand(r *mux.Router) {
 	r.HandleFunc("/command", command.ReadCommandHistory).Methods("GET")
+	r.HandleFunc("/session/{id}", command.ReadSession).Methods("GET")
 }
