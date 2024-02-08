@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 	u_sushi "u-sushi"
 	"u-sushi/models"
 
@@ -39,8 +40,19 @@ func ReadImage(w http.ResponseWriter, r *http.Request) {
 	wrapErr := func(err error) error {
 		return fmt.Errorf("read image: %v", err)
 	}
+	var err error
+
+	limitS := r.URL.Query().Get("limit")
+	limit, _ := strconv.Atoi(limitS)
+	offsetS := r.URL.Query().Get("offset")
+	offset, _ := strconv.Atoi(offsetS)
+
 	images := []models.Image{}
-	err := u_sushi.GetDB().Select(&images, "select * from image")
+	if limit == 0 {
+		err = u_sushi.GetDB().Select(&images, "select * from image order by id offset $1", offset)
+	} else {
+		err = u_sushi.GetDB().Select(&images, "select * from image order by id offset $1 limit $2", offset, limit)
+	}
 	if err != nil {
 		u_sushi.HttpError(w, http.StatusInternalServerError, wrapErr(err))
 		return
